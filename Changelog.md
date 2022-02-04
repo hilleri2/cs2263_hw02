@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - Created and updated README.md and the Changelog.md
-- 
-
-## [1.0.0] - 2022-01-31
-### Added
 -
+
+## [1.0.0] - 2022-02-04
+### Added
+-basic (testing) cli commands -h, -o, and -b
+-removed the default getGreeting and hello world methods
