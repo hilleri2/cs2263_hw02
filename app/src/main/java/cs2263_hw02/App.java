@@ -5,18 +5,23 @@ package cs2263_hw02;
 
 import org.apache.commons.cli.*;
 
-//import java.util.Scanner;
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
+
+import static cs2263_hw02.Cmd_Evalution.CmdEvaluation;
+
 /*
  * This class accepts a string of a simple mathematical expression through the terminal and evaluates it
  * @author Eric Hill
  */
 public class App {
-    /*
+    /**
      * This method accepts a string, breaks it down to components, and evaluates it
      * @param s - the mathematical equation string
      * @return total - the evaluated value of the string
      */
-    /*
+
     public static double EvaluateString(String s){
         String[] terms = s.split(" ");
         double total = Double.parseDouble(terms[0]);
@@ -25,16 +30,16 @@ public class App {
         }
         return total;
     }
-     */
-    /*
+
+    /**
      * This method takes two number inputs and an operator input, and returns the output
      * @param one - the first double of the sub-operation
      * @param operator - the specific operator of the sub-operation
      * @param two - the second double of the sub-operation
      * @return the result of the sub-operation
      */
-    /*
-    public static double operation(double one, String operator, double two){
+
+    private static double operation(double one, String operator, double two){
         switch (operator) {
             case "+": return one + two;
             case "*": return one * two;
@@ -44,7 +49,7 @@ public class App {
         }
     }
 
-     */
+
     public static void main(String[] args) throws ParseException {
         // create Options object
         Options options = new Options();
@@ -56,18 +61,9 @@ public class App {
         Option out_opt = new Option("o", "output", true, "output file");
         out_opt.setArgName("file");
         options.addOption(out_opt);
-        //another way of adding options
-        /*
-        Option opt = Option.builder("a")
-                .longOpt("all")
-                .desc("Display all")
-                .build();
-        options.addOption(opt);
-         */
 
         //CommandLineParser parser = new DefaultParser();
         //CommandLine cmd = parser.parse(options, args);
-
         CommandLine cmd;
         CommandLineParser parser = new DefaultParser();
         HelpFormatter helper = new HelpFormatter();
@@ -76,31 +72,41 @@ public class App {
         try {
             cmd = parser.parse(options, args);
             if(cmd.hasOption("h")) {
-                System.out.println("Help sent!");
-                helper.printHelp("eval", options, true);
+                //do help command stuff
+                helper.printHelp("gradle run --args=\"[options]\"", options, true);
                 System.exit(0);
             }
             else if (cmd.hasOption("b")) {
-                //String opt_config = cmd.getOptionValue("config");
-                System.out.println("Batch value: "+cmd.getOptionValue("b"));
+                //Run the evaluation, but scanning the input from the batch file
+                try {
+                    File file = new File(cmd.getOptionValue("b"));
+                    Scanner scanner = new Scanner(file);
+
+                    while(scanner.hasNextLine()) {
+                        String sentence = scanner.nextLine();
+                        System.out.println("The total of the expression "+sentence+" is " + EvaluateString(sentence));
+                    }
+                }
+                catch(Exception e) {
+                    System.out.println(e.getMessage());
+                    System.out.println("Please provide a valid file of expressions");
+                }
             }
             else if (cmd.hasOption("o")) {
-                //String opt_config = cmd.getOptionValue("config");
+                //does nothing special yet, ends when called
                 System.out.println("Output value: "+cmd.getOptionValue("o"));
             }
-        } catch (ParseException e) {
+            else{
+                //run standard evaluation from the commandline
+                while (true){
+                    System.out.println("The total of the expression is " + CmdEvaluation());
+                }
+            }
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             helper.printHelp("Usage:", options);
             System.exit(0);
         }
-
-        /*
-        while(true) {
-            Scanner MalaFileDelim = new Scanner(System.in);
-            String sentence = MalaFileDelim.nextLine();
-            System.out.println("The total of the expression is " + EvaluateString(sentence));
-        }
-         */
     }
 
 }
