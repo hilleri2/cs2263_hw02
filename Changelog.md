@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Created and updated README.md and the Changelog.md
 -
 
+## [1.1.0] - 2022-02-05
+### Added
+-ability to input and evaluate a string expression from the standard input
+-ability to take input and evaluate a string expression from a provided batch file
+-ability to print out the result of the evaluation to the standard output
+
 ## [1.0.0] - 2022-02-04
 ### Added
 -basic (testing) cli commands -h, -o, and -b
