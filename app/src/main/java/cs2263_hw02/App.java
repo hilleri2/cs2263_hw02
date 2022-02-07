@@ -6,13 +6,15 @@ package cs2263_hw02;
 import org.apache.commons.cli.*;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Scanner;
+import java.io.FileWriter;
 
 import static cs2263_hw02.Cmd_Evalution.CmdEvaluation;
 
-/*
- * This class accepts a string of a simple mathematical expression through the terminal and evaluates it
+/**
+ * This class accepts a cli argument, and then evaluates string expressions from either a file or the command line,
+ * and then returns the value to the terminal (and has the option to also write it to a file, provided
+ * by the correct cli argument)
  * @author Eric Hill
  */
 public class App {
@@ -49,11 +51,8 @@ public class App {
         }
     }
 
-
     public static void main(String[] args) throws ParseException {
-        // create Options object
         Options options = new Options();
-
         options.addOption("h","help", false, "print usage message");
         Option batch_opt = new Option("b", "batch", true, "batch file containing expressions to evaluate");
         batch_opt.setArgName("file");
@@ -62,22 +61,21 @@ public class App {
         out_opt.setArgName("file");
         options.addOption(out_opt);
 
+        //these methods are just here for my own future reference, if I ever need to use apache cli again
         //CommandLineParser parser = new DefaultParser();
         //CommandLine cmd = parser.parse(options, args);
         CommandLine cmd;
         CommandLineParser parser = new DefaultParser();
         HelpFormatter helper = new HelpFormatter();
-        //helper.printHelp("eval", options, true);
 
         try {
             cmd = parser.parse(options, args);
             if(cmd.hasOption("h")) {
-                //do help command stuff
                 helper.printHelp("gradle run --args=\"[options]\"", options, true);
+                System.out.println("To successfully save the changed to a file (assuming -o option), input any invalid string to the input stream");
                 System.exit(0);
             }
             else if (cmd.hasOption("b")) {
-                //Run the evaluation, but scanning the input from the batch file
                 try {
                     File file = new File(cmd.getOptionValue("b"));
                     Scanner scanner = new Scanner(file);
@@ -93,20 +91,30 @@ public class App {
                 }
             }
             else if (cmd.hasOption("o")) {
-                //does nothing special yet, ends when called
-                System.out.println("Output value: "+cmd.getOptionValue("o"));
+                File file = new File(cmd.getOptionValue("o"));
+                file.createNewFile();
+                FileWriter writer = new FileWriter(cmd.getOptionValue("o"));
+                try{
+                    while (true){
+                        Scanner scanner = new Scanner(System.in);
+                        String sentence = scanner.nextLine();
+                        writer.write("The total of the expression "+sentence+" is " + EvaluateString(sentence)+"\n");
+                        System.out.println("The total of the expression "+sentence+" is " + EvaluateString(sentence));
+                    }
+                }
+                catch(Exception e){
+                    writer.close();
+                }
+
             }
             else{
-                //run standard evaluation from the commandline
                 while (true){
                     System.out.println("The total of the expression is " + CmdEvaluation());
                 }
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            helper.printHelp("Usage:", options);
+            System.out.println("Invalid input, ending the session");
             System.exit(0);
         }
     }
-
 }

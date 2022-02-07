@@ -1,0 +1,2 @@
+The total of the expression 5 + 4 is 9.0
+The total of the expression 8 * 8 + 6 is 70.0
